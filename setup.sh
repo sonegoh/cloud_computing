@@ -1,36 +1,36 @@
 #!/bin/bash
 
-#REGION=$(aws ec2 describe-availability-zones | jq -r .AvailabilityZones[0].RegionName)
-#echo ${REGION}
-#AWS_ACCOUNT=$(aws sts get-caller-identity  | jq -r .Account)
-#echo ${AWS_ACCOUNT}
-#RUN_ID=$(date +'%M%S')
-#echo ${RUN_ID}
-#AWS_ROLE="lambda-role-$RUN_ID"
-#echo ${AWS_ROLE}
-#FUNC_NAME="my-func-$RUN_ID"
-#echo ${FUNC_NAME}
-#API_NAME="api-gateway-$RUN_ID"
-#echo ${API_NAME}
-#echo "Creating role $AWS_ROLE..."
-#aws iam create-role --role-name $AWS_ROLE --assume-role-policy-document file://trust-policy.json --no-cli-pager
-#
-#echo "Allowing writes to CloudWatch logs..."
-#aws iam attach-role-policy --role-name $AWS_ROLE  \
-#    --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole --no-cli-pager
-#
-#echo "Allowing writes to Dynamo.."
-#aws iam attach-role-policy --role-name $AWS_ROLE  \
-#    --policy-arn arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess --no-cli-pager
-#
-#echo "Packaging code..."
-#zip lambda.zip lambda.py
-#
-#echo "Wait for role creation"
-#aws iam wait role-exists --role-name $AWS_ROLE --no-cli-pager
-#aws iam get-role --role-name $AWS_ROLE --no-cli-pager
-#ARN_ROLE=$(aws iam get-role --role-name $AWS_ROLE | jq -r .Role.Arn)
-#echo ${ARN_ROLE}
+REGION=$(aws ec2 describe-availability-zones | jq -r .AvailabilityZones[0].RegionName)
+echo ${REGION}
+AWS_ACCOUNT=$(aws sts get-caller-identity  | jq -r .Account)
+echo ${AWS_ACCOUNT}
+RUN_ID=$(date +'%M%S')
+echo ${RUN_ID}
+AWS_ROLE="lambda-role-$RUN_ID"
+echo ${AWS_ROLE}
+FUNC_NAME="my-func-$RUN_ID"
+echo ${FUNC_NAME}
+API_NAME="api-gateway-$RUN_ID"
+echo ${API_NAME}
+echo "Creating role $AWS_ROLE..."
+aws iam create-role --role-name $AWS_ROLE --assume-role-policy-document file://trust-policy.json --no-cli-pager
+
+echo "Allowing writes to CloudWatch logs..."
+aws iam attach-role-policy --role-name $AWS_ROLE  \
+    --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole --no-cli-pager
+
+echo "Allowing writes to Dynamo.."
+aws iam attach-role-policy --role-name $AWS_ROLE  \
+    --policy-arn arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess --no-cli-pager
+
+echo "Packaging code..."
+zip lambda.zip lambda.py
+
+echo "Wait for role creation"
+aws iam wait role-exists --role-name $AWS_ROLE --no-cli-pager
+aws iam get-role --role-name $AWS_ROLE --no-cli-pager
+ARN_ROLE=$(aws iam get-role --role-name $AWS_ROLE | jq -r .Role.Arn)
+echo ${ARN_ROLE}
 
 if ! aws dynamodb list-tables | jq -r .TableNames | grep -q GFG; then
   echo "Creating new DynamoDB table"
