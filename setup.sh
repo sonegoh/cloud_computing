@@ -63,3 +63,8 @@ aws lambda add-permission --function-name $FUNC_NAME \
     --statement-id $STMT_ID --action lambda:InvokeFunction \
     --principal apigateway.amazonaws.com \
     --source-arn "arn:aws:execute-api:$REGION:$AWS_ACCOUNT:$API_ID/*" --no-cli-pager
+
+echo "This is your api gateway - $API_ENDPOINT"
+echo "Use $API_ENDPOINT/entry?plate=XXX-XXX-XXX&parkingLot=XXX for entrance api"
+echo "The output of this call will be your ticketID, save it for exit."
+echo "Use $API_ENDPOINT/exit??ticketId=XXX for exit api"
