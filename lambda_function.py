@@ -25,9 +25,6 @@ def lambda_handler(event, context):
         return entry(event, context)
     elif "/exit" in path:
         return exit_parking(event, context)
-    # path_from_user = event['path']
-    # print(f"path is {event['path']}")
-    # return respond(None, "yey")
 
 
 def entry(event, context):
