@@ -24,7 +24,7 @@ aws iam attach-role-policy --role-name $AWS_ROLE  \
     --policy-arn arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess --no-cli-pager
 
 echo "Packaging code..."
-zip lambda.zip lambda.py
+zip lambda.zip lambda_function.py
 
 echo "Wait for role creation"
 aws iam wait role-exists --role-name $AWS_ROLE --no-cli-pager
@@ -32,15 +32,16 @@ aws iam get-role --role-name $AWS_ROLE --no-cli-pager
 ARN_ROLE=$(aws iam get-role --role-name $AWS_ROLE | jq -r .Role.Arn)
 echo ${ARN_ROLE}
 
-if ! aws dynamodb list-tables | jq -r .TableNames | grep -q GFG; then
+if ! aws dynamodb list-tables | jq -r .TableNames | grep -q Parking; then
   echo "Creating new DynamoDB table"
   aws dynamodb create-table \
-      --table-name GFG \
+      --table-name Parking \
       --attribute-definitions \
-          AttributeName=user_id,AttributeType=N \
+          AttributeName=user_id,AttributeType=S \
       --key-schema \
           AttributeName=user_id,KeyType=HASH \
-      --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
+      --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
+      --no-cli-pager
 fi
 
 
@@ -55,3 +56,10 @@ echo "Creating API Gateway..."
 API_CREATED=$(aws apigatewayv2 create-api --name $API_NAME --protocol-type HTTP --target $FUNC_ARN)
 API_ID=$(echo $API_CREATED | jq -r .ApiId)
 API_ENDPOINT=$(echo $API_CREATED | jq -r .ApiEndpoint)
+
+STMT_ID=$(uuidgen)
+
+aws lambda add-permission --function-name $FUNC_NAME \
+    --statement-id $STMT_ID --action lambda:InvokeFunction \
+    --principal apigateway.amazonaws.com \
+    --source-arn "arn:aws:execute-api:$REGION:$AWS_ACCOUNT:$API_ID/*" --no-cli-pager
