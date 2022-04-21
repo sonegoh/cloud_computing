@@ -45,7 +45,7 @@ def exit_parking(event):
     plate = table_item['Item']['plate']
     lot = table_item['Item']['parkingLot']
     print(table_item['Item']['entranceTime'])
-    return respond(None, {'price': price, 'licensePlate': plate,'total_time_min': total_time_min, 'parking_lot': lot})
+    return respond(None, {'price': price, 'licensePlate': plate, 'total_time_min': total_time_min, 'parking_lot': lot})
 
 
 def get_price(entrance_time):
