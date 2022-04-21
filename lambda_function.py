@@ -24,7 +24,7 @@ def lambda_handler(event, context):
     if "/entry" in path:
         return entry(event, context)
     elif "/exit" in path:
-        return exit_parking(event, context)
+        return exit_parking(event)
 
 
 def entry(event, context):
@@ -37,7 +37,7 @@ def entry(event, context):
     return respond(None, request_id)
 
 
-def exit_parking(event, context):
+def exit_parking(event):
     ticket_id = event['queryStringParameters']['ticketId']
     table_item = table.get_item(Key={'user_id': ticket_id})
     price = get_price(table_item['Item']['entranceTime'])
