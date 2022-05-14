@@ -9,7 +9,7 @@ def some_long_function(some_input):
     """An example function for redis queue."""
     job = get_current_job()
     print("sleeping for 10 sec")
-    time.sleep(10)
+    time.sleep(100)
 
     return {
         "job_id": job.id,
