@@ -85,7 +85,7 @@ def get_result():
             404,
             description=f"No result found for job_id {job.id}. Try checking the job's status.",
         )
-    return jsonify(job.result)
+    return job.result
 
 
 if __name__ == "__main__":
