@@ -33,6 +33,6 @@ def hash_work(data_input, iterations):
         output = hashlib.sha512(data_input).digest()
     output = hashlib.sha512(output).digest()
     print(f"output is {output}")
-    print(f"output base64 is {base64.encodebytes(output)}")
+    print(f"output base64 is {base64.b64decode(base64.encodebytes(output))}")
     return {"job_id": job.id,
-            "output_hash": base64.encodebytes(output)}
+            "output_hash": base64.b64decode(base64.encodebytes(output))}
