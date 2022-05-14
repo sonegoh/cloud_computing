@@ -20,7 +20,10 @@ def some_long_function(some_input):
         "result": some_input,
     }
 
-# def work(buffer, iterations):
-#     output = hashlib.sha512(buffer).digest() for i in range(iterations - 1):
-#         output = hashlib.sha512(output).digest()
-#     return output
+
+def hash_work(data_input, iterations):
+    output = ""
+    for i in range(iterations - 1):
+        output = hashlib.sha512(data_input).digest()
+    output = hashlib.sha512(output).digest()
+    return output

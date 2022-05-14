@@ -5,7 +5,7 @@
 from flask import Flask, abort, jsonify, request
 from rq.job import Job
 
-from functions import some_long_function
+from functions import some_long_function, hash_work
 from redis_resc import redis_conn, redis_queue
 
 # from rq.registry import FinishedJobRegistry
@@ -54,6 +54,25 @@ def enqueue():
         print(data)
 
     job = redis_queue.enqueue(some_long_function, data, result_ttl=86400)
+    return jsonify({"job_id": job.id})
+
+
+@app.route("/enqueue1", methods=["PUT"])
+def enqueue():
+    if request.method == "PUT":
+        num_of_iter = int(request.args.get("num"))
+        if not num_of_iter:
+                abort(
+                    404,
+                    description=(
+                        "No query parameter num passed. "
+                        "Send a  int value to the num query parameter."
+                    ),
+                )
+        data = request.get_data().decode("utf-8")
+        print(data)
+
+    job = redis_queue.enqueue(hash_work, data, num_of_iter, result_ttl=86400)
     return jsonify({"job_id": job.id})
 
 
