@@ -32,7 +32,4 @@ def hash_work(data_input, iterations):
         output = hashlib.sha512(data_input).digest()
     output = hashlib.sha512(output).digest()
     print(f"output is {output}")
-    return {
-        "job_id": job.id,
-        "output": output.decode(),
-    }
+    return job.id, output.decode()
