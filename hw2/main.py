@@ -41,7 +41,7 @@ def enqueue():
     if request.method == "POST":
         data = request.json
 
-    job = redis_queue.enqueue(some_long_function, data)
+    job = redis_queue.enqueue(some_long_function, data, result_ttl=86400)
     return jsonify({"job_id": job.id})
 
 
