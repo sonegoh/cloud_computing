@@ -28,7 +28,7 @@ def hash_work(data_input, iterations):
     time.sleep(5)
     print("done sleeping")
     print(f"data_input is {data_input}")
-    output = ""
+    output = b""
     for i in range(iterations - 1):
         output = hashlib.sha512(output).digest()
     output = hashlib.sha512(output).digest().hex()
