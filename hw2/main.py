@@ -50,10 +50,10 @@ def enqueue():
     #         )
     #     data = {"external_id": query_param}
     if request.method == "POST":
-        data = request.get_data()
-        print(str(data))
+        data = request.get_data().decode("utf-8")
+        print(data)
 
-    job = redis_queue.enqueue(some_long_function, str(data), result_ttl=86400)
+    job = redis_queue.enqueue(some_long_function, data, result_ttl=86400)
     return jsonify({"job_id": job.id})
 
 
