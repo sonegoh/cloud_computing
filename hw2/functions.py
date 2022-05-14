@@ -1,6 +1,6 @@
 """Define functions to use in redis queue."""
-
 import time
+import hashlib
 
 from rq import get_current_job
 
@@ -19,3 +19,8 @@ def some_long_function(some_input):
         "input": some_input,
         "result": some_input,
     }
+
+# def work(buffer, iterations):
+#     output = hashlib.sha512(buffer).digest() for i in range(iterations - 1):
+#         output = hashlib.sha512(output).digest()
+#     return output
