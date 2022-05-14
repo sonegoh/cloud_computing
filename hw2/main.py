@@ -58,7 +58,7 @@ def enqueue():
 
 
 @app.route("/enqueue1", methods=["PUT"])
-def enqueue():
+def enqueue1():
     if request.method == "PUT":
         num_of_iter = int(request.args.get("num"))
         if not num_of_iter:
