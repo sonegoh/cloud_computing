@@ -4,8 +4,9 @@
 
 from flask import Flask, abort, jsonify, request
 from rq.job import Job
+import random
 
-from functions import some_long_function, hash_work
+from functions import hash_work
 from redis_resc import redis_conn, redis_queue
 
 # from rq.registry import FinishedJobRegistry
@@ -26,55 +27,46 @@ def home():
     return "Running!"
 
 
-@app.route("/get_finished_jobs")
+@app.route("/pullCompleted", methods=["PUT"])
 def get_all_finished():
-    """Show the app is working."""
-    finished_jobs = redis_queue.finished_job_registry
-    print(finished_jobs.get_job_ids())
-    return "Running!"
+    finished_jobs_ids = redis_queue.finished_job_registry.get_job_ids()
+    num_of_jobs_to_return = request.args.get("num")
+    random_jobs_list = random.sample(finished_jobs_ids, int(num_of_jobs_to_return))
+    list_of_jobs_results = []
+    for job_id in random_jobs_list:
+        try:
+            job = Job.fetch(job_id, connection=redis_conn)
+        except Exception as exception:
+            abort(404, description=exception)
+        if not job.result:
+            abort(
+                404,
+                description=f"No result found for job_id {job.id}. Try checking the job's status.",
+            )
+        list_of_jobs_results.append(job.result)
+    return jsonify(list_of_jobs_results)
 
 
-@app.route("/enqueue", methods=["POST", "GET"])
+@app.route("/enqueue", methods=["PUT"])
 def enqueue():
-    """Enqueues a task into redis queue to be processes.
-    Returns the job_id."""
-    # if request.method == "GET":
-    #     query_param = request.args.get("external_id")
-    #     if not query_param:
-    #         abort(
-    #             404,
-    #             description=(
-    #                 "No query parameter external_id passed. "
-    #                 "Send a value to the external_id query parameter."
-    #             ),
-    #         )
-    #     data = {"external_id": query_param}
-    if request.method == "POST":
-        data = request.get_data().decode("utf-8")
-        print(data)
-
-    job = redis_queue.enqueue(some_long_function, data, result_ttl=86400)
-    return jsonify({"job_id": job.id})
-
-
-@app.route("/enqueue1", methods=["PUT"])
-def enqueue1():
     if request.method == "PUT":
         num_of_iter = request.args.get("iterations")
         if not num_of_iter:
-                abort(
-                    404,
-                    description=(
-                        "No query parameter num passed. "
-                        "Send a  int value to the num query parameter."
-                    ),
-                )
+            abort(
+                404,
+                description=(
+                    "No query parameter num passed. "
+                    "Send a  int value to the num query parameter."
+                ),
+            )
         data = request.get_data()
         print(data)
         print(num_of_iter)
 
     job = redis_queue.enqueue(hash_work, data, int(num_of_iter), result_ttl=86400)
     return jsonify({"job_id": job.id})
+
+
 
 
 @app.route("/check_status")
