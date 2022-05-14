@@ -8,6 +8,9 @@ from rq.job import Job
 from functions import some_long_function
 from redis_resc import redis_conn, redis_queue
 
+from rq.registry import FinishedJobRegistry
+
+
 app = Flask(__name__)
 
 
@@ -20,6 +23,14 @@ def resource_not_found(exception):
 @app.route("/")
 def home():
     """Show the app is working."""
+    return "Running!"
+
+
+@app.route("/get_finished_jobs")
+def get_all_finished():
+    """Show the app is working."""
+    finished_jobs = redis_queue.finished_job_registry
+    print(finished_jobs)
     return "Running!"
 
 
