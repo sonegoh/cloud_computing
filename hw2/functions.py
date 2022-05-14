@@ -8,7 +8,7 @@ from rq import get_current_job
 def some_long_function(some_input):
     """An example function for redis queue."""
     job = get_current_job()
-    print("sleeping for 10 sec")
+    print("sleeping for 100 sec")
     time.sleep(100)
 
     return {
