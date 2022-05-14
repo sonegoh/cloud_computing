@@ -30,7 +30,7 @@ def home():
 def get_all_finished():
     """Show the app is working."""
     finished_jobs = redis_queue.finished_job_registry
-    print(finished_jobs)
+    print(finished_jobs.get_job_ids())
     return "Running!"
 
 
