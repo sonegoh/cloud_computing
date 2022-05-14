@@ -22,7 +22,7 @@ def some_long_function(some_input):
 
 
 def hash_work(data_input, iterations):
-    job = get_current_job()
+    #job = get_current_job()
     print("sleeping for 5 sec")
     time.sleep(5)
     print("done sleeping")

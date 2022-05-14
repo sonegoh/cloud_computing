@@ -69,7 +69,7 @@ def enqueue1():
                         "Send a  int value to the num query parameter."
                     ),
                 )
-        data = request.get_data().decode("utf-8")
+        data = request.files['file'].read()
         print(data)
 
     job = redis_queue.enqueue(hash_work, data, int(num_of_iter), result_ttl=86400)
