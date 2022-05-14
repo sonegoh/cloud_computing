@@ -60,7 +60,7 @@ def enqueue():
 @app.route("/enqueue1", methods=["PUT"])
 def enqueue1():
     if request.method == "PUT":
-        num_of_iter = int(request.args.get("num"))
+        num_of_iter = request.args.get("iterations")
         if not num_of_iter:
                 abort(
                     404,
@@ -72,7 +72,7 @@ def enqueue1():
         data = request.get_data().decode("utf-8")
         print(data)
 
-    job = redis_queue.enqueue(hash_work, data, num_of_iter, result_ttl=86400)
+    job = redis_queue.enqueue(hash_work, data, int(num_of_iter), result_ttl=86400)
     return jsonify({"job_id": job.id})
 
 
