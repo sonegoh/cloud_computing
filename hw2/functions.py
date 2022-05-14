@@ -29,7 +29,7 @@ def hash_work(data_input, iterations):
     print(f"data_input is {data_input}")
     output = ""
     for i in range(iterations - 1):
-        output = hashlib.sha512(data_input).digest()
-    output = hashlib.sha512(output).digest()
+        output = hashlib.sha512(data_input).hexdigest()
+    output = hashlib.sha512(output).hexdigest()
     print(f"output is {output}")
     return job.id, output
