@@ -45,7 +45,7 @@ def get_all_finished():
                 description=f"No result found for job_id {job.id}. Try checking the job's status.",
             )
         list_of_jobs_results.append(job.result)
-    return list_of_jobs_results
+    return jsonify(list_of_jobs_results)
 
 
 @app.route("/enqueue", methods=["PUT"])
