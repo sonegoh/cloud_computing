@@ -34,5 +34,5 @@ def hash_work(data_input, iterations):
     print(f"output is {output}")
     return {
         "job_id": job.id,
-        "output": output,
+        "output": output.decode(),
     }
