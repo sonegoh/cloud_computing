@@ -8,7 +8,7 @@ from rq.job import Job
 from functions import some_long_function
 from redis_resc import redis_conn, redis_queue
 
-from rq.registry import FinishedJobRegistry
+# from rq.registry import FinishedJobRegistry
 
 
 app = Flask(__name__)
@@ -88,4 +88,4 @@ def get_result():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0")
