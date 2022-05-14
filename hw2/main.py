@@ -27,10 +27,10 @@ def home():
     return "Running!"
 
 
-@app.route("/pullCompleted", methods=["PUT"])
+@app.route("/pullCompleted", methods=["POST"])
 def get_all_finished():
     finished_jobs_ids = redis_queue.finished_job_registry.get_job_ids()
-    num_of_jobs_to_return = request.args.get("num")
+    num_of_jobs_to_return = request.args.get("top")
     random_jobs_list = random.sample(finished_jobs_ids, int(num_of_jobs_to_return))
     list_of_jobs_results = []
     for job_id in random_jobs_list:
