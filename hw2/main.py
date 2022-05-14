@@ -71,6 +71,7 @@ def enqueue1():
                 )
         data = request.get_data()
         print(data)
+        print(num_of_iter)
 
     job = redis_queue.enqueue(hash_work, data, int(num_of_iter), result_ttl=86400)
     return jsonify({"job_id": job.id})

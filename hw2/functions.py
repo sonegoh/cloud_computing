@@ -22,7 +22,7 @@ def some_long_function(some_input):
 
 
 def hash_work(data_input, iterations):
-    #job = get_current_job()
+    job = get_current_job()
     print("sleeping for 5 sec")
     time.sleep(5)
     print("done sleeping")
@@ -31,4 +31,8 @@ def hash_work(data_input, iterations):
     for i in range(iterations - 1):
         output = hashlib.sha512(data_input).digest()
     output = hashlib.sha512(output).digest()
-    return output
+    print(f"output is {output}")
+    return {
+        "job_id": job.id,
+        "output": output,
+    }
