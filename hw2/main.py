@@ -50,7 +50,7 @@ def enqueue():
     #         )
     #     data = {"external_id": query_param}
     if request.method == "POST":
-        data = request.json
+        data = request.data
         print(data)
 
     job = redis_queue.enqueue(some_long_function, data, result_ttl=86400)
