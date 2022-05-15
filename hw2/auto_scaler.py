@@ -62,7 +62,7 @@ def workers_checker():
                 print(f"list of workers - {list_of_all_workers}")
             else:
                 print("number of workers is more then 4, we will not scale up more due to $$$")
-        elif number_of_workers / number_of_workers < 10:
+        elif number_of_jobs_in_queue / number_of_workers < 10:
             print(f"ratio of number_of_workers / number_of_workers is {number_of_workers / number_of_workers}")
             # random_worker_to_kill = random.sample(list_of_all_workers, 1)
             random_index = random.randint(0, number_of_workers - 1)
