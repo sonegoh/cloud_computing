@@ -48,7 +48,7 @@ def workers_checker():
     while True:
         # Wait 100 sec before each scale up or down of instances.
         print("sleeping 100 secs")
-        time.sleep(100)
+        time.sleep(10)
         number_of_jobs_in_queue = len(redis_queue.jobs) + 200
         print(number_of_jobs_in_queue)
         number_of_workers = len(list_of_all_workers) + 1
@@ -62,7 +62,7 @@ def workers_checker():
                 print("number of workers is more then 4, we will not scale up more due to $$$")
         elif number_of_workers / number_of_workers < 10:
             # random_worker_to_kill = random.sample(list_of_all_workers, 1)
-            random_index = random.randint(0, number_of_workers)
+            random_index = random.randint(0, number_of_workers - 1)
             print(f"removing the worker {list_of_all_workers[random_index]} from the list.")
             list_of_all_workers.pop(random_index)
             # terminate_worker_instance(random_worker_to_kill)
