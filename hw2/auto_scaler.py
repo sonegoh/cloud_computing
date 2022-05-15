@@ -58,9 +58,11 @@ def workers_checker():
                 print("number of workers is less then 4")
                 #     list_of_all_workers.append(create_worker_instance())
                 list_of_all_workers.append("i-11111")
+                print(f"list of workers - {list_of_all_workers}")
             else:
                 print("number of workers is more then 4, we will not scale up more due to $$$")
         elif number_of_workers / number_of_workers < 10:
+            print(f"ratio of number_of_workers / number_of_workers is {number_of_workers / number_of_workers}")
             # random_worker_to_kill = random.sample(list_of_all_workers, 1)
             random_index = random.randint(0, number_of_workers - 1)
             print(f"removing the worker {list_of_all_workers[random_index]} from the list.")
