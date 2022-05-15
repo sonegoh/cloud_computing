@@ -132,7 +132,7 @@ def get_result():
     return job.result
 
 
-def create_instance():
+def create_worker_instance():
     key_name = os.environ.get("KEY_NAME")
     worker_sg = os.environ.get("WORKER_SG")
     master_ip = os.environ.get("MY_IP")
