@@ -47,6 +47,7 @@ def create_worker_instance():
 def workers_checker():
     while True:
         # Wait 100 sec before each scale up or down of instances.
+        print("sleeping 100 secs")
         time.sleep(100)
         number_of_jobs_in_queue = len(redis_queue.jobs) + 200
         print(number_of_jobs_in_queue)
