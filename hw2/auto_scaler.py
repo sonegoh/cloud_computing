@@ -70,6 +70,8 @@ def workers_checker():
             print(f"removing the worker {list_of_all_workers[random_index]} from the list.")
             list_of_all_workers.pop(random_index)
             # terminate_worker_instance(random_worker_to_kill)
+        else:
+            print("nothing to do")
 
 
 def main():
