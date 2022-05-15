@@ -56,7 +56,7 @@ def enqueue():
             abort(
                 404,
                 description=(
-                    "No query parameter num passed. "
+                    "No query parameter iterations passed. "
                     "Send a  int value to the num query parameter."
                 ),
             )
@@ -68,9 +68,7 @@ def enqueue():
     return jsonify({"job_id": job.id})
 
 
-
-
-@app.route("/check_status")
+# @app.route("/check_status")
 def check_status():
     """Takes a job_id and checks its status in redis queue."""
     job_id = request.args["job_id"]
@@ -83,7 +81,7 @@ def check_status():
     return jsonify({"job_id": job.id, "job_status": job.get_status()})
 
 
-@app.route("/get_result")
+# @app.route("/get_result")
 def get_result():
     """Takes a job_id and returns the job's result."""
     job_id = request.args["job_id"]
