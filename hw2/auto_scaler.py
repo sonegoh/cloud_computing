@@ -48,15 +48,23 @@ def workers_checker():
     while True:
         # Wait 100 sec before each scale up or down of instances.
         time.sleep(100)
-        number_of_jobs_in_queue = len(redis_queue.jobs)
-        number_of_workers = len(list_of_all_workers)
+        number_of_jobs_in_queue = len(redis_queue.jobs) + 200
+        print(number_of_jobs_in_queue)
+        number_of_workers = len(list_of_all_workers) + 1
         if number_of_jobs_in_queue / number_of_workers > 100:
             # This is safety mechanism to no exceed the AWS free tier.
             if number_of_workers < 4:
-                list_of_all_workers.append(create_worker_instance())
+                print("number of workers is less then 4")
+                #     list_of_all_workers.append(create_worker_instance())
+                list_of_all_workers.append("i-11111")
+            else:
+                print("number of workers is more then 4, we will not scale up more due to $$$")
         elif number_of_workers / number_of_workers < 10:
-            random_worker_to_kill = random.sample(list_of_all_workers, 1)
-            terminate_worker_instance(random_worker_to_kill)
+            # random_worker_to_kill = random.sample(list_of_all_workers, 1)
+            random_index = random.randint(0, number_of_workers)
+            print(f"removing the worker {list_of_all_workers[random_index]} from the list.")
+            list_of_all_workers.pop(random_index)
+            # terminate_worker_instance(random_worker_to_kill)
 
 
 def main():
