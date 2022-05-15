@@ -52,6 +52,7 @@ def workers_checker():
         number_of_jobs_in_queue = len(redis_queue.jobs) + 200
         print(number_of_jobs_in_queue)
         number_of_workers = len(list_of_all_workers) + 1
+        print(f"number of workers - {number_of_workers}")
         if number_of_jobs_in_queue / number_of_workers > 100:
             # This is safety mechanism to no exceed the AWS free tier.
             if number_of_workers < 4:
@@ -65,6 +66,7 @@ def workers_checker():
             print(f"ratio of number_of_workers / number_of_workers is {number_of_workers / number_of_workers}")
             # random_worker_to_kill = random.sample(list_of_all_workers, 1)
             random_index = random.randint(0, number_of_workers - 1)
+            print(f"rand index is {random_index}")
             print(f"removing the worker {list_of_all_workers[random_index]} from the list.")
             list_of_all_workers.pop(random_index)
             # terminate_worker_instance(random_worker_to_kill)
