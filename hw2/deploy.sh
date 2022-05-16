@@ -1,12 +1,12 @@
-KEY_NAME="hadar-`date +'%F'`"
+KEY_NAME="hadar1-`date +'%F'`"
 KEY_PEM="$KEY_NAME.pem"
 
-STACK_NAME="haddar-stack-1"
+STACK_NAME="haddar-stack-5"
 
 echo "create key pair $KEY_PEM to connect to instances and save locally"
-aws ec2 create-key-pair --key-name $KEY_NAME  --query "KeyMaterial" --output text > $KEY_PEM
+#aws ec2 create-key-pair --key-name $KEY_NAME  --query "KeyMaterial" --output text > $KEY_PEM
 # secure the key pair
-chmod 600 $KEY_PEM
+#chmod 600 $KEY_PEM
 
 # figure out my ip
 echo "getting my ip"
@@ -30,8 +30,8 @@ echo $VPC_ID
 echo $VPC_CIDR_BLOCK
 
 echo "createing stack hadar stack"
-STACK_RES=$(aws cloudformation create-stack --stack-name $STACK_NAME --template-body file://cloud-formation.yml --capabilities CAPABILITY_IAM \
-	--parameters ParameterKey=InstanceType,ParameterValue=t2.nano \
+STACK_RES=$(aws cloudformation create-stack --stack-name $STACK_NAME --template-body file://cloud-formation.yml --capabilities CAPABILITY_NAMED_IAM \
+	--parameters ParameterKey=InstanceType,ParameterValue=t2.micro \
 	ParameterKey=KeyName,ParameterValue=$KEY_NAME \
 	ParameterKey=SSHLocation,ParameterValue=$MY_IP/32 \
 	ParameterKey=VPCId,ParameterValue=$VPC_ID \
@@ -53,10 +53,10 @@ echo $OUTPUTS
 
 echo "getting instances IP"
 PUBLIC_IP_1=$(aws cloudformation --region $REGION describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='Instance1IP'].OutputValue" --output text)
-PUBLIC_IP_2=$(aws cloudformation --region $REGION describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='Instance2IP'].OutputValue" --output text)
-PUBLIC_IP_3=$(aws cloudformation --region $REGION describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='Instance3IP'].OutputValue" --output text)
-PUBLIC_IP_4=$(aws cloudformation --region $REGION describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='Instance4IP'].OutputValue" --output text)
-
+#PUBLIC_IP_2=$(aws cloudformation --region $REGION describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='Instance2IP'].OutputValue" --output text)
+#PUBLIC_IP_3=$(aws cloudformation --region $REGION describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='Instance3IP'].OutputValue" --output text)
+#PUBLIC_IP_4=$(aws cloudformation --region $REGION describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='Instance4IP'].OutputValue" --output text)
+echo $PUBLIC_IP_1
 #DNS_ADD=$(aws elbv2 describe-load-balancers --names YaronandEdenELB | jq -r .LoadBalancers[0].DNSName)
 #echo $DNS_ADD
 

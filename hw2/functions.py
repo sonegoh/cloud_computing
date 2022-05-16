@@ -1,3 +1,4 @@
+
 """Define functions to use in redis queue."""
 import time
 import hashlib

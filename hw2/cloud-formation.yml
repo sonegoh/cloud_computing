@@ -11,8 +11,8 @@ Parameters:
   InstanceType:
     Description: WebServer EC2 instance type
     Type: String
-    Default: t2.nano
-    AllowedValues: [t2.nano]
+    Default: t2.micro
+    AllowedValues: [t2.micro]
     ConstraintDescription: must be a valid EC2 instance type.
 
   SSHLocation:
@@ -53,7 +53,6 @@ Parameters:
     Type: String
 
 Resources:
-
   InstanceSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -64,8 +63,8 @@ Resources:
           ToPort: 22
           CidrIp: !Ref 'SSHLocation'
         - IpProtocol: tcp
-          FromPort: 8080
-          ToPort: 8080
+          FromPort: 5000
+          ToPort: 5000
           CidrIp: '0.0.0.0/0'
         - IpProtocol: tcp
           FromPort: 6379
@@ -75,6 +74,37 @@ Resources:
           FromPort: 6379
           ToPort: 6379
           CidrIp: !Ref 'SSHLocation'
+  MyEC2Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action: sts:AssumeRole
+      Description: Role to provide access to S3
+      Policies:
+        - PolicyName: EmbeddedInlinePolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: 'cloudformation:*'
+                Resource: '*'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonEC2FullAccess
+      RoleName: EC2FullAccess
+
+  MyInstanceProfile:
+    Type: "AWS::IAM::InstanceProfile"
+    Properties:
+      Path: "/"
+      Roles:
+        -
+          Ref: "MyEC2Role"
 
   EC2Instance1:
     Type: AWS::EC2::Instance
@@ -84,6 +114,7 @@ Resources:
         - !Ref InstanceSecurityGroup
       KeyName: !Ref KeyName
       ImageId: !Ref LatestAmiId
+      IamInstanceProfile:  !Ref MyInstanceProfile
       UserData:
         Fn::Base64:
           !Sub |
@@ -99,7 +130,8 @@ Resources:
           cd /home/ubuntu
           git clone https://github.com/sonegoh/cloud_computing.git
           cd cloud_computing/hw2 && python3 main.py
-
+    DependsOn:
+      - MyEC2Role
 #  EC2Instance2:
 #    Type: AWS::EC2::Instance
 #    Properties:
