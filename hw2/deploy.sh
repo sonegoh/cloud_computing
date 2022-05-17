@@ -1,7 +1,7 @@
-KEY_NAME="hadar1-`date +'%F'`"
+KEY_NAME="hadar111-`date +'%F'`"
 KEY_PEM="$KEY_NAME.pem"
 
-STACK_NAME="haddar-stack-5"
+STACK_NAME="haddar-stack-6"
 
 echo "create key pair $KEY_PEM to connect to instances and save locally"
 #aws ec2 create-key-pair --key-name $KEY_NAME  --query "KeyMaterial" --output text > $KEY_PEM
@@ -53,18 +53,18 @@ echo $OUTPUTS
 
 echo "getting instances IP"
 PUBLIC_IP_1=$(aws cloudformation --region $REGION describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='Instance1IP'].OutputValue" --output text)
-#PUBLIC_IP_2=$(aws cloudformation --region $REGION describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='Instance2IP'].OutputValue" --output text)
-#PUBLIC_IP_3=$(aws cloudformation --region $REGION describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='Instance3IP'].OutputValue" --output text)
-#PUBLIC_IP_4=$(aws cloudformation --region $REGION describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='Instance4IP'].OutputValue" --output text)
+INSTANCE_ID_1=$(aws cloudformation --region $REGION describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='InstanceId1'].OutputValue" --output text)
+SG_FOR_WORKERS=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID_1 --query 'Reservations[*].Instances[*].[SecurityGroups[].GroupId |[*]]' --output text)
+@PUBLIC_IP_2=$(aws cloudformation --region $REGION describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='Instance2IP'].OutputValue" --output text)
+
 echo $PUBLIC_IP_1
-#DNS_ADD=$(aws elbv2 describe-load-balancers --names YaronandEdenELB | jq -r .LoadBalancers[0].DNSName)
-#echo $DNS_ADD
+#echo $PUBLIC_IP_2
 
 # ssh-add ./$KEY_PEM
 
 # echo "cloning repo"
-# ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_1 'git clone https://github.com/edenbartov/cloud-computing.git'
-# ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_2 'git clone https://github.com/edenbartov/cloud-computing.git'
+#ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_1 "echo $KEY_NAME $PUBLIC_IP_1"
+#ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_2 'git clone https://github.com/edenbartov/cloud-computing.git'
 # ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_3 'git clone https://github.com/edenbartov/cloud-computing.git'
 # ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_4 'git clone https://github.com/edenbartov/cloud-computing.git'
 
@@ -72,10 +72,10 @@ echo $PUBLIC_IP_1
 # sleep 10
 
 # echo "running the code"
-# ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_1 'cd cloud-computing && python3 app.py' -eaf
-# ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_2 'cd cloud-computing && python3 app.py' -eaf
-# ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_3 'cd cloud-computing && python3 app.py' -eaf
-# ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_4 'cd cloud-computing && python3 app.py' -eaf
+ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_1 'cd cloud_computing/hw2 && python3 main.py' -eaf
+ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_1 "cd cloud_computing/hw2 && python3 auto_scaler.py $KEY_NAME $SG_FOR_WORKERS $PUBLIC_IP_1" -eaf
+#ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_2 'cd cloud_computing/hw2 && python3 main.py' -eaf
+#ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_2 "cd cloud_computing/hw2 && python3 auto_scaler.py $KEY_NAME $SG_FOR_WORKERS $PUBLIC_IP_2" -eaf
 
 echo "done"
 
