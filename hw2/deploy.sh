@@ -16,16 +16,8 @@ echo "My IP: $MY_IP"
 
 # get subnets for the ELB and vpc id
 echo "getting all subnets and vpc id's"
-#SUB_ID_1=$(aws ec2 describe-subnets --filters Name=default-for-az,Values=true | jq -r .Subnets[0] | jq -r .SubnetId)
-#SUB_ID_2=$(aws ec2 describe-subnets --filters Name=default-for-az,Values=true | jq -r .Subnets[1] | jq -r .SubnetId)
-#SUB_ID_3=$(aws ec2 describe-subnets --filters Name=default-for-az,Values=true | jq -r .Subnets[2] | jq -r .SubnetId)
-#SUB_ID_4=$(aws ec2 describe-subnets --filters Name=default-for-az,Values=true | jq -r .Subnets[3] | jq -r .SubnetId)
 VPC_ID=$(aws ec2 describe-subnets --filters Name=default-for-az,Values=true | jq -r .Subnets[0] | jq -r .VpcId)
 VPC_CIDR_BLOCK=$(aws ec2 describe-vpcs --filters Name=vpc-id,Values=$VPC_ID | jq -r .Vpcs[0].CidrBlock)
-#echo $SUB_ID_1
-#echo $SUB_ID_2
-#echo $SUB_ID_3
-#echo $SUB_ID_4
 echo $VPC_ID
 echo $VPC_CIDR_BLOCK
 
@@ -53,29 +45,23 @@ echo $OUTPUTS
 
 echo "getting instances IP"
 PUBLIC_IP_1=$(aws cloudformation --region $REGION describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='Instance1IP'].OutputValue" --output text)
+PUBLIC_IP_2=$(aws cloudformation --region $REGION describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='Instance2IP'].OutputValue" --output text)
 INSTANCE_ID_1=$(aws cloudformation --region $REGION describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='InstanceId1'].OutputValue" --output text)
 SG_FOR_WORKERS=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID_1 --query 'Reservations[*].Instances[*].[SecurityGroups[].GroupId |[*]]' --output text)
-@PUBLIC_IP_2=$(aws cloudformation --region $REGION describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='Instance2IP'].OutputValue" --output text)
+
 
 echo $PUBLIC_IP_1
-#echo $PUBLIC_IP_2
+echo $PUBLIC_IP_2
 
-# ssh-add ./$KEY_PEM
 
-# echo "cloning repo"
-#ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_1 "echo $KEY_NAME $PUBLIC_IP_1"
-#ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_2 'git clone https://github.com/edenbartov/cloud-computing.git'
-# ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_3 'git clone https://github.com/edenbartov/cloud-computing.git'
-# ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_4 'git clone https://github.com/edenbartov/cloud-computing.git'
-
-# echo "waiting 10 seconds for all the dependecies to install"
-# sleep 10
+echo "waiting 200 seconds for all the dependecies to install, user data scripts takes time."
+sleep 10
 
 # echo "running the code"
-ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_1 'cd cloud_computing/hw2 && python3 main.py' -eaf
+ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_1 'cd cloud_computing/hw2 && python3 main.py $PUBLIC_IP_2' -eaf
 ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_1 "cd cloud_computing/hw2 && python3 auto_scaler.py $KEY_NAME $SG_FOR_WORKERS $PUBLIC_IP_1" -eaf
-#ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_2 'cd cloud_computing/hw2 && python3 main.py' -eaf
-#ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_2 "cd cloud_computing/hw2 && python3 auto_scaler.py $KEY_NAME $SG_FOR_WORKERS $PUBLIC_IP_2" -eaf
+ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_2 'cd cloud_computing/hw2 && python3 main.py $PUBLIC_IP_1' -eaf
+ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_2 "cd cloud_computing/hw2 && python3 auto_scaler.py $KEY_NAME $SG_FOR_WORKERS $PUBLIC_IP_2" -eaf
 
 echo "done"
 

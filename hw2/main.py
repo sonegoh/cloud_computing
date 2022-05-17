@@ -5,6 +5,7 @@ import os
 from flask import Flask, abort, jsonify, request
 from rq.job import Job
 import random
+import sys
 
 from functions import hash_work
 from redis_resc import redis_conn, redis_queue
@@ -43,7 +44,7 @@ def get_all_finished_local_queue():
 
 
 def get_all_finished_remote_queue():
-    remote_redis_host = os.getenv('REMOTE_REDIS_SERVER')
+    remote_redis_host = sys.argv[1]
     remote_redis_queue, remote_redis_conn = get_remote_redis_queue_connection(remote_redis_host)
     finished_jobs_ids = remote_redis_queue.finished_job_registry.get_job_ids()
     list_of_all_finished_jobs = []
