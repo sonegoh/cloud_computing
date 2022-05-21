@@ -129,7 +129,6 @@ Resources:
           pip3 install boto3
           cd /home/ubuntu
           git clone https://github.com/sonegoh/cloud_computing.git
-          cd cloud_computing/hw2 && python3 main.py
     DependsOn:
       - MyEC2Role
 #  EC2Instance2:
