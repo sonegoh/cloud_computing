@@ -45,13 +45,14 @@ echo $OUTPUTS
 
 echo "getting instances IP"
 PUBLIC_IP_1=$(aws cloudformation --region $REGION describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='Instance1IP'].OutputValue" --output text)
-PUBLIC_IP_2=$(aws cloudformation --region $REGION describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='Instance2IP'].OutputValue" --output text)
+#PUBLIC_IP_2=$(aws cloudformation --region $REGION describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='Instance2IP'].OutputValue" --output text)
 INSTANCE_ID_1=$(aws cloudformation --region $REGION describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='InstanceId1'].OutputValue" --output text)
 SG_FOR_WORKERS=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID_1 --query 'Reservations[*].Instances[*].[SecurityGroups[].GroupId |[*]]' --output text)
 
-
+echo $INSTANCE_ID_1
+echo $SG_FOR_WORKERS
 echo $PUBLIC_IP_1
-echo $PUBLIC_IP_2
+#echo $PUBLIC_IP_2
 
 
 echo "waiting 200 seconds for all the dependecies to install, user data scripts takes time."
@@ -59,9 +60,9 @@ sleep 10
 
 # echo "running the code"
 ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_1 'cd cloud_computing/hw2 && python3 main.py $PUBLIC_IP_2' -eaf
-ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_1 "cd cloud_computing/hw2 && python3 auto_scaler.py $KEY_NAME $SG_FOR_WORKERS $PUBLIC_IP_1" -eaf
-ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_2 'cd cloud_computing/hw2 && python3 main.py $PUBLIC_IP_1' -eaf
-ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_2 "cd cloud_computing/hw2 && python3 auto_scaler.py $KEY_NAME $SG_FOR_WORKERS $PUBLIC_IP_2" -eaf
+#ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_1 "cd cloud_computing/hw2 && python3 auto_scaler.py $KEY_NAME $SG_FOR_WORKERS $PUBLIC_IP_1" -eaf
+#ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_2 'cd cloud_computing/hw2 && python3 main.py $PUBLIC_IP_1' -eaf
+#ssh -i $KEY_PEM -o "StrictHostKeyChecking=no" -o "ConnectionAttempts=10" ubuntu@$PUBLIC_IP_2 "cd cloud_computing/hw2 && python3 auto_scaler.py $KEY_NAME $SG_FOR_WORKERS $PUBLIC_IP_2" -eaf
 
 echo "done"
 
