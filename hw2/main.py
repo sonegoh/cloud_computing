@@ -12,7 +12,6 @@ from redis_resc import redis_conn, redis_queue
 import redis
 from rq import Queue
 
-
 app = Flask(__name__)
 
 
@@ -22,6 +21,8 @@ def resource_not_found(exception):
     return jsonify(error=str(exception)), 404
 
 
+# This way on every call to the pullCompleted route, this code will sync the compleated jobs from the other redis
+# server. Then i will return random top completed jobs
 @app.route("/pullCompleted", methods=["POST"])
 def get_all_finished_local_queue():
     finished_jobs_ids = redis_queue.finished_job_registry.get_job_ids()
@@ -85,15 +86,13 @@ def enqueue():
                 ),
             )
         data = request.get_data()
-        print(data)
-        print(num_of_iter)
 
     job = redis_queue.enqueue(hash_work, data, int(num_of_iter), result_ttl=86400)
     return jsonify({"job_id": job.id})
 
 
-# @app.route("/check_status")
-def check_status():
+# Internal function i use for debugging the status of jobs.
+def _check_status():
     """Takes a job_id and checks its status in redis queue."""
     job_id = request.args["job_id"]
     try:
@@ -103,7 +102,7 @@ def check_status():
     return jsonify({"job_id": job.id, "job_status": job.get_status()})
 
 
-# @app.route("/get_result")
+# Internal function i use for debugging the status of jobs.
 def get_result():
     """Takes a job_id and returns the job's result."""
     job_id = request.args["job_id"]

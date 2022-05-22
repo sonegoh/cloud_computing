@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 
-Description: Create the following 4 EC2 instances, 2 security groups for ELB and EC2.
+Description: Create the following 2 EC2 instances, 1 security groups EC2.
 
 Parameters:
   KeyName:
@@ -27,26 +27,6 @@ Parameters:
   LatestAmiId:
     Type:  String
     Default: ami-09d56f8956ab235b3
-
-#  SubNetId1:
-#    Description: First SubNet id 1
-#    Type: String
-#
-#  SubNetId2:
-#    Description: Second SubNet id 2
-#    Type: String
-#
-#  SubNetId3:
-#    Description: SubNet id 3
-#    Type: String
-#
-#  SubNetId4:
-#    Description: SubNet id 4
-#    Type: String
-
-  VPCId:
-    Description: vpc id
-    Type: String
 
   VPCcidr:
     Description: vpc cidr
@@ -85,7 +65,7 @@ Resources:
               Service:
                 - ec2.amazonaws.com
             Action: sts:AssumeRole
-      Description: Role to provide access to S3
+      Description: Role to provide access to ec2 create instance from the instance (for auto scaling)
       Policies:
         - PolicyName: EmbeddedInlinePolicy
           PolicyDocument:
@@ -131,31 +111,32 @@ Resources:
           git clone https://github.com/sonegoh/cloud_computing.git
     DependsOn:
       - MyEC2Role
-#  EC2Instance2:
-#    Type: AWS::EC2::Instance
-#    Properties:
-#      InstanceType: !Ref InstanceType
-#      SecurityGroupIds:
-#        - !Ref InstanceSecurityGroup
-#      KeyName: !Ref KeyName
-#      ImageId: !Ref LatestAmiId
-#      IamInstanceProfile:  !Ref MyInstanceProfile
-#      UserData:
-#        Fn::Base64:
-#          !Sub |
-#          #!/bin/bash
-#          # Sleep for the instance role might not be properly attached
-#          sleep 10
-#          sudo apt-get update
-#          sudo apt-get install python3-pip -y
-#          sudo apt-get install python3-flask -y
-#          pip3 install xxhash
-#          pip3 install boto3
-#          cd /home/ubuntu
-#          git clone https://github.com/edenbartov/cloud-computing.git
-#          cd cloud-computing && python3 app.py
-#    DependsOn:
-#      - TableRole
+
+  EC2Instance2:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      SecurityGroupIds:
+        - !Ref InstanceSecurityGroup
+      KeyName: !Ref KeyName
+      ImageId: !Ref LatestAmiId
+      IamInstanceProfile: !Ref MyInstanceProfile
+      UserData:
+        Fn::Base64:
+          !Sub |
+          #!/bin/bash
+          # Sleep for the instance role might not be properly attached
+          sleep 10
+          sudo apt-get update
+          sudo apt-get install python3-pip -y
+          sudo apt-get install python3-flask -y
+          sudo apt install python3-rq -y
+          sudo apt install redis-server -y
+          pip3 install boto3
+          cd /home/ubuntu
+          git clone https://github.com/sonegoh/cloud_computing.git
+    DependsOn:
+      - MyEC2Role
 
 Outputs:
   InstanceId1:
@@ -164,9 +145,9 @@ Outputs:
   Instance1IP:
     Description: IP address of EC2Instance1
     Value: !GetAtt [EC2Instance1, PublicIp]
-#  InstanceId2:
-#    Description: InstanceId of EC2Instance2
-#    Value: !Ref 'EC2Instance2'
-#  Instance2IP:
-#    Description: IP address of EC2Instance2
-#    Value: !GetAtt [EC2Instance2, PublicIp]
+  InstanceId2:
+    Description: InstanceId of EC2Instance2
+    Value: !Ref 'EC2Instance2'
+  Instance2IP:
+    Description: IP address of EC2Instance2
+    Value: !GetAtt [EC2Instance2, PublicIp]
