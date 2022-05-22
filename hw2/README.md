@@ -29,5 +29,6 @@ In this case we will probably get some timeouts from the API, in real world situ
 an aws ASG with cloud watch metrics that check if the cpu or memory is above a certain threshold, if so it would scale the group,  
 this way the ASG can now handle all the load and scale down if needed.  
 
-##Note - Architecture diagram
-Check the architecture_of_the_solution.png , it contains an image of the stack architecture
+##Architecture diagram
+![Alt text](architecture_of_the_solution.png?raw=true "Title")
+
