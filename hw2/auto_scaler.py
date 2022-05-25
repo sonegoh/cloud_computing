@@ -57,9 +57,13 @@ def workers_checker():
         print(f"number of workers - {number_of_workers}")
         print(f"number of jobs - {number_of_jobs_in_queue}")
         # Avoid the div of zero
-        if number_of_workers == 0:
-            number_of_workers = 1
-        if number_of_jobs_in_queue / number_of_workers > 10:
+        if number_of_workers == 0 and number_of_jobs_in_queue == 0:
+            print("nothing to do.")
+            time.sleep(20)
+            continue
+        elif number_of_workers == 0:
+            list_of_all_workers.append(create_worker_instance())
+        elif number_of_jobs_in_queue / number_of_workers > 10:
             # This is safety mechanism to no exceed the AWS free tier, i don't want to create tons of instances,
             # i want to have max value for that.
             if number_of_workers < 4:
@@ -70,8 +74,8 @@ def workers_checker():
                 print("number of workers is more then 4, we will not scale up more due to cost restrictions")
         elif number_of_jobs_in_queue / number_of_workers <= 1:
             print(f"ratio of number_of_workers / number_of_workers is {number_of_workers / number_of_workers}")
-            if number_of_workers == 0:
-                print("number of workers is 0 continue")
+            if number_of_workers == 0 or number_of_workers == 1:
+                print("number of workers is 0 or 1 , continue")
                 continue
             random_index = random.randint(0, number_of_workers - 1)
             print(f"rand index is {random_index}")
