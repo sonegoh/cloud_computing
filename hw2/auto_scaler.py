@@ -50,13 +50,15 @@ def create_worker_instance():
 def workers_checker():
     while True:
         # Wait 200 sec before each scale up or down of instances.
-        print("sleeping 200 secs")
-        time.sleep(200)
+
         number_of_jobs_in_queue = len(redis_queue.jobs)
-        print(number_of_jobs_in_queue)
+        print(f"number of jobs in q - {number_of_jobs_in_queue}")
         number_of_workers = len(list_of_all_workers)
         print(f"number of workers - {number_of_workers}")
         print(f"number of jobs - {number_of_jobs_in_queue}")
+        # Avoid the div of zero
+        if number_of_workers == 0:
+            number_of_workers = 1
         if number_of_jobs_in_queue / number_of_workers > 100:
             # This is safety mechanism to no exceed the AWS free tier, i don't want to create tons of instances,
             # i want to have max value for that.
@@ -75,6 +77,8 @@ def workers_checker():
             terminate_worker_instance(random_worker_to_kill)
         else:
             print("nothing to do, the scale is perfect")
+        print("sleeping 200 secs")
+        time.sleep(200)
 
 
 def main():
