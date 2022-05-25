@@ -77,6 +77,7 @@ def workers_checker():
             print(f"ratio of number_of_workers / number_of_workers is {number_of_workers / number_of_workers}")
             if number_of_workers == 0 or number_of_workers == 1:
                 print("number of workers is 0 or 1 , continue")
+                time.sleep(20)
                 continue
             random_index = random.randint(0, number_of_workers - 1)
             print(f"rand index is {random_index}")
