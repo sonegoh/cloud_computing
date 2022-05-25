@@ -145,9 +145,15 @@ Outputs:
   Instance1IP:
     Description: IP address of EC2Instance1
     Value: !GetAtt [EC2Instance1, PublicIp]
+  Instance1PrivateIp:
+    Description: IP address of EC2Instance1
+    Value: !GetAtt [EC2Instance1, PrivateIp]
   InstanceId2:
     Description: InstanceId of EC2Instance2
     Value: !Ref 'EC2Instance2'
   Instance2IP:
     Description: IP address of EC2Instance2
     Value: !GetAtt [EC2Instance2, PublicIp]
+  Instance2PrivateIp:
+    Description: IP address of EC2Instance2
+    Value: !GetAtt [EC2Instance2, PrivateIp]
