@@ -71,6 +71,7 @@ def workers_checker():
         elif number_of_jobs_in_queue / number_of_workers <= 1:
             print(f"ratio of number_of_workers / number_of_workers is {number_of_workers / number_of_workers}")
             if number_of_workers == 0:
+                print("number of workers is 0 continue")
                 continue
             random_index = random.randint(0, number_of_workers - 1)
             print(f"rand index is {random_index}")
