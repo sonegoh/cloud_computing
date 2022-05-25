@@ -62,6 +62,7 @@ def workers_checker():
             time.sleep(20)
             continue
         elif number_of_workers == 0:
+            print("scaling workers from 0 to 1")
             list_of_all_workers.append(create_worker_instance())
         elif number_of_jobs_in_queue / number_of_workers > 10:
             # This is safety mechanism to no exceed the AWS free tier, i don't want to create tons of instances,
